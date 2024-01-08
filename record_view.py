@@ -1,4 +1,4 @@
-from tkinter import ttk
+from ttkbootstrap import ttk
 
 
 class RecordView(ttk.Frame):
@@ -22,7 +22,7 @@ class RecordView(ttk.Frame):
         ref_num_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.ref_number,
             width=16
@@ -32,7 +32,7 @@ class RecordView(ttk.Frame):
         title_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.title_en,
             width=34,
@@ -43,7 +43,7 @@ class RecordView(ttk.Frame):
         purpose_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.purpose_en,
             width=34,
@@ -54,7 +54,7 @@ class RecordView(ttk.Frame):
         start_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.start_date,
             width=14)
@@ -63,47 +63,47 @@ class RecordView(ttk.Frame):
         end_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.end_date,
             width=14
         )
-        end_label.pack(side="left", fill="both")  # .grid(row=0, column=5)
+        end_label.pack(side="left", fill="both")
 
         airfare_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.airfare,
             width=14
         )
-        airfare_label.pack(side="left", fill="both")  # .grid(row=0, column=6)
+        airfare_label.pack(side="left", fill="both")
 
         transport_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.other_transport,
             width=14
         )
-        transport_label.pack(side="left", fill="both")  # .grid(row=0, column=7)
+        transport_label.pack(side="left", fill="both")
 
         lodging_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.lodging,
             width=14
         )
-        lodging_label.pack(side="left", fill="both")  # .grid(row=0, column=8)
+        lodging_label.pack(side="left", fill="both")
 
         meals_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.meals,
             width=14
@@ -113,7 +113,7 @@ class RecordView(ttk.Frame):
         expenses_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.other_expenses,
             width=14
@@ -123,7 +123,7 @@ class RecordView(ttk.Frame):
         total_label = ttk.Label(
             master=self,
             anchor="nw",
-            borderwidth=1,
+            border=1,
             relief="solid",
             text=travel_record.total,
             width=14
@@ -134,17 +134,17 @@ class RecordView(ttk.Frame):
             master=self,
             command=self.delete_button_clicked,
             text='Delete',
-            width=8
+            bootstyle="outline"
         )
-        delete_button.pack(side="left", fill="both")
+        delete_button.pack(side="left", padx=5)
 
         edit_button = ttk.Button(
             master=self,
             command=self.edit_button_clicked,
             text='Edit',
-            width=8
+            bootstyle="outline"
         )
-        edit_button.pack(side="left", fill="both")
+        edit_button.pack(side="left")
 
     def delete_button_clicked(self):
         """

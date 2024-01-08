@@ -5,6 +5,7 @@ from model import TravelRecord
 from view import Window
 from controller import Controller
 import mysql.connector
+import ttkbootstrap as ttk
 
 import os
 from dotenv import load_dotenv
@@ -66,7 +67,7 @@ class App(tkinter.Tk):
         view.pack()
 
         # create a controller
-        controller = Controller(expense_list, view)
+        controller = Controller(expense_list[0:1000], view)
 
         # set the controller to view
         view.set_controller(controller)
@@ -74,14 +75,9 @@ class App(tkinter.Tk):
         # display records on startup
         controller.display()
 
-        # Configure style
-        # self.style = ttk.Style(self)
-        # self.style.configure('TCheckbutton', font=('Ariel', 11))
-        # self.style.configure('TButton', font=('Ariel', 10))
-        # self.style.configure('big.TButton', font=('Ariel', 12))
-
 
 if __name__ == '__main__':
     app = App()
+    style = ttk.Style("superhero")
     app.state("zoomed")
     app.mainloop()

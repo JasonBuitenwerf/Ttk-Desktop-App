@@ -6,4 +6,4 @@ pip install -U pip
 pip install mysql-connector-python
 pip install python-dotenv
 python -m pip install -U matplotlib
-pip install tkcalendar
+python -m pip install ttkbootstrap

@@ -1,6 +1,7 @@
 import tkinter as tk
-from tkinter import ttk
-from tkcalendar import DateEntry
+import ttkbootstrap as ttk
+from ttkbootstrap import DateEntry
+from datetime import date
 
 
 class PieChartForm(ttk.Frame):
@@ -33,11 +34,11 @@ class PieChartForm(ttk.Frame):
             font=('Ariel', 11)
         )
         include_label.pack(side='left', padx=5)
-        self.start_date = DateEntry(date_entry_frame, selectmode='day', year=2017, month=1, day=1)
+        self.start_date = DateEntry(master=date_entry_frame, dateformat='%Y-%m-%d', startdate=date(2017,1,1))
         self.start_date.pack(side='left', padx=5)
-        conjoining_label = ttk.Label(date_entry_frame, text='and', anchor='s', font=('Ariel', 11))
+        conjoining_label = ttk.Label(master=date_entry_frame, text='and', anchor='s', font=('Ariel', 11))
         conjoining_label.pack(side='left', padx=5)
-        self.end_date = DateEntry(date_entry_frame, selectmode='day', year=2023, month=12, day=31)
+        self.end_date = DateEntry(master=date_entry_frame, dateformat='%Y-%m-%d', startdate=date(2023,12,31))
         self.end_date.pack(side='left', padx=5)
 
         # Select Expenses
@@ -220,3 +221,4 @@ class PieChartForm(ttk.Frame):
 
     def chart_by_title(self):
         self.controller.chart_by_title(self)
+        

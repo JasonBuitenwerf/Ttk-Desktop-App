@@ -1,26 +1,15 @@
 # Program written by Jason Buitenwerf
 
 import csv
+import os
 import mysql.connector
+from dotenv import load_dotenv
 from datetime import datetime
 import matplotlib.pyplot as pyplot
 
 from new_record_form import NewRecordForm
 from pie_chart_form import PieChartForm
 from model import TravelRecord
-
-import os
-from dotenv import load_dotenv
-
-load_dotenv()
-
-config = {
-    'host': os.getenv('DB_HOST'),
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
-    'database': os.getenv('DB_DATABASE')
-}
-
 
 class Controller:
     """
@@ -35,6 +24,13 @@ class Controller:
         """
         self.model = model
         self.view = view
+        load_dotenv()
+        self.config = {
+            'user': os.getenv("DB_USER"),
+            'password': os.getenv("DB_PASSWORD"),
+            'host': os.getenv("DB_HOST"),
+            'database': os.getenv("DB_DATABASE")
+        }
         self.insert_statement = """
         INSERT INTO travel_records (
             ref_number, 
@@ -85,8 +81,8 @@ class Controller:
                             row["ref_number"],
                             row["title_en"],
                             row["purpose_en"],
-                            datetime.strptime(row["start_date"], "%Y-%m-%d"),
-                            datetime.strptime(row["end_date"], "%Y-%m-%d"),
+                            datetime.strptime(row["start_date"], "%Y-%m-%d") if row["start_date"] != '' else None,
+                            datetime.strptime(row["end_date"], "%Y-%m-%d") if row["end_date"] != '' else None,
                             float(row["airfare"]) if row["airfare"] != "" else 0.0,
                             float(row["other_transport"]) if row["other_transport"] != "" else 0.0,
                             float(row["lodging"]) if row["lodging"] != "" else 0.0,
@@ -99,7 +95,7 @@ class Controller:
             self.view.display_fnf_error()
 
         # Create database connection
-        mysql_connection = mysql.connector.connect(**config)
+        mysql_connection = mysql.connector.connect(**self.config)
 
         cursor = mysql_connection.cursor()
 
@@ -143,7 +139,7 @@ class Controller:
 
         self.model = []
         # create database connection
-        mysql_connection = mysql.connector.connect(**config)
+        mysql_connection = mysql.connector.connect(**self.config)
 
         cursor = mysql_connection.cursor()
 
@@ -169,7 +165,7 @@ class Controller:
         cursor.close()
         mysql_connection.close()
 
-        self.view.display(self.model)
+        self.view.display(self.model[0:100])
 
     def display_form(self, travel_record=None):
         """
@@ -216,7 +212,7 @@ class Controller:
                 self.model.append(new_record)
 
                 # create database connection
-                mysql_connection = mysql.connector.connect(**config)
+                mysql_connection = mysql.connector.connect(**self.config)
 
                 cursor = mysql_connection.cursor()
 
@@ -244,7 +240,7 @@ class Controller:
                     self.model[index] = new_record
 
                     # create database connection
-                    mysql_connection = mysql.connector.connect(**config)
+                    mysql_connection = mysql.connector.connect(**self.config)
 
                     cursor = mysql_connection.cursor()
 
@@ -272,7 +268,7 @@ class Controller:
         self.model.remove(record)
 
         # create database connection
-        mysql_connection = mysql.connector.connect(**config)
+        mysql_connection = mysql.connector.connect(**self.config)
 
         cursor = mysql_connection.cursor()
 
@@ -287,6 +283,8 @@ class Controller:
         Generates a pie chart with slices representing expense categories
         :param form: the form used to generate the chart, provides access to the selected options
         """
+        start_date = form.start_date.entry.get()
+        end_date =form.end_date.entry.get()
         labels = []
 
         select_query = 'SELECT '
@@ -295,15 +293,15 @@ class Controller:
                 select_query += f"sum({key}), "
                 labels.append(key)
         select_query = select_query[:-2] + f"FROM travel_records " \
-                                           f"WHERE start_date >= '{form.start_date.get_date()}' " \
-                                           f"AND end_date <= '{form.end_date.get_date()}' AND ("
+                                           f"WHERE start_date >= '{start_date}' " \
+                                           f"AND end_date <= '{end_date}' AND ("
         for key in form.titles_to_include:
             if form.titles_to_include[key].get():
                 select_query += f"title_en LIKE '{key}' OR "
         select_query = select_query[:-4] + ")"
 
         # create database connection and execute query
-        mysql_connection = mysql.connector.connect(**config)
+        mysql_connection = mysql.connector.connect(**self.config)
         cursor = mysql_connection.cursor()
         cursor.execute(select_query)
         record = list(cursor.fetchone())
@@ -328,20 +326,22 @@ class Controller:
         Generates a pie chart with slices representing expense categories
         :param form: the form used to generate the chart, provides access to the selected options
         """
+        start_date = form.start_date.entry.get()
+        end_date =form.end_date.entry.get()
         select_query = 'SELECT title_en, sum('
         for key in form.expenses_to_include:
             if form.expenses_to_include[key].get():
                 select_query += f"{key}+"
         select_query = select_query[:-1] + f") FROM travel_records " \
-                                           f"WHERE start_date >= '{form.start_date.get_date()}' " \
-                                           f"AND end_date <= '{form.end_date.get_date()}' AND ("
+                                           f"WHERE start_date >= '{start_date}' " \
+                                           f"AND end_date <= '{end_date}' AND ("
         for key in form.titles_to_include:
             if form.titles_to_include[key].get():
                 select_query += f"title_en LIKE '{key}' OR "
         select_query = select_query[:-4] + ") GROUP BY title_en ORDER BY title_en"
 
         # create database connection and execute query
-        mysql_connection = mysql.connector.connect(**config)
+        mysql_connection = mysql.connector.connect(**self.config)
         cursor = mysql_connection.cursor()
         cursor.execute(select_query)
         records = cursor.fetchall()
@@ -387,3 +387,4 @@ class Controller:
             map(lambda attribute, total: attribute / total * 100, expenses_by_selected_titles.values(), iterable_total))
         pyplot.pie(percentages, labels=list(expenses_by_selected_titles.keys()))
         pyplot.show()
+        

@@ -1,7 +1,7 @@
 # Program Written by Jason Buitenwerf
 
 import tkinter as tk
-from tkinter import ttk
+import ttkbootstrap as ttk
 from tkinter import filedialog
 from model import TravelRecord
 from record_view import RecordView
